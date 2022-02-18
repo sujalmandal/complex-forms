@@ -6,13 +6,12 @@ import s.m.complexforms.form.BinaryFormElement;
 import s.m.complexforms.form.Form;
 import s.m.complexforms.form.TextFormElement;
 import s.m.complexforms.statemachine.ActionEnum;
-import s.m.complexforms.statemachine.State;
 import s.m.complexforms.statemachine.StateEnum;
 
 import java.util.Collections;
 import java.util.List;
 
-public class StartInformationCollection implements State<Input, Output> {
+public class StartInformationCollection extends AbstractState<Input, Output> {
 
     @Override
     public StateEnum getCurrentState() {
@@ -20,7 +19,7 @@ public class StartInformationCollection implements State<Input, Output> {
     }
 
     @Override
-    public List<ActionEnum> getActionOptions(Input input) {
+    public List<ActionEnum> getActionOptions() {
         return Collections.singletonList(ActionEnum.TO_NEXT);
     }
 
@@ -28,7 +27,7 @@ public class StartInformationCollection implements State<Input, Output> {
     public Output execute(Input input) {
         Output output = new Output();
         output.setCurrentStep(this.getCurrentState());
-        output.setActionOptions(this.getActionOptions(input));
+        output.setActionOptions(this.getActionOptions());
         Form personalInfoCollectionForm = Form
                 .builder("Personal information section")
                 .withElement(new TextFormElement("Your Name","name"))

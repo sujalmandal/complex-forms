@@ -3,8 +3,9 @@ package s.m.complexforms.state;
 import lombok.extern.slf4j.Slf4j;
 import s.m.complexforms.dto.Input;
 import s.m.complexforms.dto.Output;
+import s.m.complexforms.dto.PersonalInformationRequest;
+import s.m.complexforms.dto.PersonalInformationResponse;
 import s.m.complexforms.statemachine.ActionEnum;
-import s.m.complexforms.statemachine.State;
 import s.m.complexforms.statemachine.StateEnum;
 
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import static s.m.complexforms.statemachine.ActionEnum.*;
 import static s.m.complexforms.statemachine.StateEnum.PERSONAL_INFORMATION_FORM;
 
 @Slf4j
-public class PersonalInformationCollection implements State<Input, Output> {
+public class PersonalInformationCollection extends AbstractState<PersonalInformationRequest, PersonalInformationResponse> {
 
     @Override
     public StateEnum getCurrentState() {
@@ -22,7 +23,7 @@ public class PersonalInformationCollection implements State<Input, Output> {
     }
 
     @Override
-    public List<ActionEnum> getActionOptions(Input input) {
+    public List<ActionEnum> getActionOptions() {
         return Arrays.asList(
                 TO_EDUCATION_INFO,
                 TO_WORK_INFO,
@@ -31,20 +32,28 @@ public class PersonalInformationCollection implements State<Input, Output> {
     }
 
     @Override
-    public Output execute(Input input) {
-        log.info("received request : ",input);
-        Output output = new Output();
-        output.setActionOptions(getActionOptions(input));
+    public Output execute(Input request) {
+        log.info("received request : {}", request);
+        // actually process the request
+        PersonalInformationResponse result = process(request);
+        Output output = toOutputFromStateResponse(result);
+        // setup options for the next actions from this state */
+        output.setActionOptions(getActionOptions());
         return output;
     }
 
-    @Override
-    public Output toOutputFromStateResponse(Output output) {
-        return output;
+    private PersonalInformationResponse process(Input request){
+        return new PersonalInformationResponse();
     }
 
     @Override
-    public Input toStateRequestFromInput(Input input) {
-        return input;
+    public Output toOutputFromStateResponse(PersonalInformationResponse response) {
+        return new Output();
+    }
+
+    @Override
+    public PersonalInformationRequest toStateRequestFromInput(Input input) {
+        PersonalInformationRequest request = new PersonalInformationRequest();
+        return request;
     }
 }

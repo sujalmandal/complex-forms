@@ -14,8 +14,13 @@ import s.m.complexforms.service.StateExecutionService;
 @RequestMapping("/state")
 public class FormController {
 
-    @Autowired
+
     private StateExecutionService executionService;
+
+    @Autowired
+    public FormController(StateExecutionService executionService) {
+        this.executionService = executionService;
+    }
 
     @RequestMapping(value = "/process",method = RequestMethod.POST)
     public ResponseEntity<Output> executeState(@RequestBody Input input) {

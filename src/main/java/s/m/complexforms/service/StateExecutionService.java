@@ -18,8 +18,7 @@ public class StateExecutionService {
         State thisState = StateFactory.getState(input.getFromState(), input.getAction());
         log.info("Current state : {}",thisState.getCurrentState());
         //execute the operation in this current state
-        Output output = thisState.toOutputFromStateResponse(
-                thisState.execute(thisState.toStateRequestFromInput(input)));
+        Output output = thisState.execute(input);
         //set the executed state as the current state
         output.setCurrentStep(thisState.getCurrentState());
         // capture the sequence of states
