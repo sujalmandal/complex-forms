@@ -14,6 +14,8 @@ import s.m.complexforms.statemachine.StateEnum;
 import java.util.Collections;
 import java.util.List;
 
+import static s.m.complexforms.statemachine.ActionEnum.TO_PERSONAL_INFO;
+
 /* very first state */
 @Slf4j
 public class StartInformationCollection extends AbstractState<Input, Output> {
@@ -21,11 +23,6 @@ public class StartInformationCollection extends AbstractState<Input, Output> {
     @Override
     public StateEnum getCurrentState() {
         return StateEnum.START;
-    }
-
-    @Override
-    public List<ActionEnum> getActionOptions() {
-        return Collections.singletonList(ActionEnum.TO_NEXT);
     }
 
     private Input input;
@@ -41,7 +38,7 @@ public class StartInformationCollection extends AbstractState<Input, Output> {
     @Override
     public Output getOutput() {
         Output out = new Output();
-        out.setActionOptions(this.getActionOptions());
+        out.setNextAction(TO_PERSONAL_INFO);
         /* generate the dynamic form to display for collecting personal information */
         Form personalInfoCollectionForm = Form
                 .builder("Personal information section")
@@ -51,6 +48,7 @@ public class StartInformationCollection extends AbstractState<Input, Output> {
                 .build();
         /* render this form in the UI */
         out.setFormToFill(personalInfoCollectionForm);
+        out.setBackAction(null);
         return out;
     }
 

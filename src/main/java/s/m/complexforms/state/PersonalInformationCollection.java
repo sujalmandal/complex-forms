@@ -7,14 +7,12 @@ import s.m.complexforms.dto.Output;
 import s.m.complexforms.dto.PersonalInformationRequest;
 import s.m.complexforms.dto.PersonalInformationResponse;
 import s.m.complexforms.form.BinaryFormElement;
+import s.m.complexforms.form.Form;
+import s.m.complexforms.form.NumberFormElement;
 import s.m.complexforms.form.TextFormElement;
 import s.m.complexforms.statemachine.AbstractState;
-import s.m.complexforms.statemachine.ActionEnum;
 import s.m.complexforms.statemachine.StateEnum;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static s.m.complexforms.statemachine.ActionEnum.*;
 import static s.m.complexforms.statemachine.StateEnum.PERSONAL_INFORMATION_FORM;
@@ -25,15 +23,6 @@ public class PersonalInformationCollection extends AbstractState<PersonalInforma
     @Override
     public StateEnum getCurrentState() {
         return PERSONAL_INFORMATION_FORM;
-    }
-
-    @Override
-    public List<ActionEnum> getActionOptions() {
-        return Arrays.asList(
-                TO_EDUCATION_INFO,
-                TO_WORK_INFO,
-                TO_BACK
-        );
     }
 
     private Input input;
@@ -58,21 +47,34 @@ public class PersonalInformationCollection extends AbstractState<PersonalInforma
     @Override
     public Output getOutput() {
         Output output = new Output();
-        /* setup options for the next actions from this state
-         *
-         * Set up the form to show as a result for this state that can act as an
-         * input for the next possible states
-         */
-        /* if the person is a student, do not allow the work info state to be accessible */
-        if(personalInformationRequest.getIsStudent()){
-            output.setActionOptions(getActionOptions()
-                    .stream().filter(actionEnum -> actionEnum!= TO_WORK_INFO)
-                    .collect(Collectors.toList()));
+        /* decide the next state */
+        if(personalInformationRequest.getIsStudent()) {
+            output.setNextAction(TO_EDUCATION_INFO);
+            /* set up education entry form */
+            Form educationInformationForm = Form
+                    .builder("Education information section")
+                    .withElement(new TextFormElement("College name", FormStateConstants.COLLEGE_NAME))
+                    .withElement(new TextFormElement("Expected graduation date",FormStateConstants.GRADUATION_YEAR))
+                    .withElement(new TextFormElement("Your Major in College",FormStateConstants.MAJOR))
+                    .withElement(new NumberFormElement("current CGPA",FormStateConstants.CGPA))
+                    .build();
+            output.setFormToFill(educationInformationForm);
+        }
+        else {
+            output.setNextAction(TO_WORK_INFO);
+            /* set up work info */
+            Form workInformationForm = Form
+                    .builder("Work information section")
+                    .withElement(new NumberFormElement("Total experience", FormStateConstants.TOTAL_EXPERIENCE))
+                    .withElement(new NumberFormElement("Your current annual compensation",FormStateConstants.CURRENT_SALARY))
+                    .withElement(new TextFormElement("Industry you work in",FormStateConstants.INDUSTRY))
+                    .withElement(new TextFormElement("Current employer name",FormStateConstants.CURRENT_EMPLOYER))
+                    .withElement(new TextFormElement("Current position",FormStateConstants.CURRENT_POSITION))
+                    .build();
+            output.setFormToFill(workInformationForm);
+        }
 
-        }
-        else{
-            output.setActionOptions(getActionOptions());
-        }
+        output.setBackAction(TO_START);
         return output;
     }
 

@@ -14,6 +14,5 @@ import java.util.List;
 
 public interface State<StateRequest,StateResponse> {
     StateEnum getCurrentState();
-    List<ActionEnum> getActionOptions();
     Output execute(Input input);
 }
