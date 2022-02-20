@@ -10,7 +10,6 @@ import java.util.Stack;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Input<StateRequest> {
-    /* optional request */
     StateRequest request;
     StateEnum fromState;
     ActionEnum action;
