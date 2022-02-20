@@ -10,8 +10,10 @@ import java.util.Stack;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Output {
+public class Output<StateResponse> {
     Form formToFill;
+    /* optional response */
+    StateResponse response;
     /* a combination of current step & a particular action defines the next state of the system */
     StateEnum currentStep;
     ActionEnum nextAction;

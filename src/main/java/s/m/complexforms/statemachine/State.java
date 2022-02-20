@@ -2,7 +2,6 @@ package s.m.complexforms.statemachine;
 import s.m.complexforms.dto.Input;
 import s.m.complexforms.dto.Output;
 
-import java.util.List;
 
 /*
  Represents a unit of work that is executed when a particular state is reached
@@ -14,5 +13,5 @@ import java.util.List;
 
 public interface State<StateRequest,StateResponse> {
     StateEnum getCurrentState();
-    Output execute(Input input);
+    Output<StateResponse> execute(Input<StateRequest> input);
 }

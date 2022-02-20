@@ -1,52 +1,58 @@
 package s.m.complexforms.state;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import s.m.complexforms.common.FormStateConstants;
 import s.m.complexforms.dto.Input;
 import s.m.complexforms.dto.Output;
 import s.m.complexforms.dto.PersonalInformationRequest;
-import s.m.complexforms.dto.PersonalInformationResponse;
-import s.m.complexforms.form.BinaryFormElement;
+import s.m.complexforms.entity.Person;
 import s.m.complexforms.form.Form;
 import s.m.complexforms.form.NumberFormElement;
 import s.m.complexforms.form.TextFormElement;
 import s.m.complexforms.statemachine.AbstractState;
+import s.m.complexforms.statemachine.InputOutputUtil;
 import s.m.complexforms.statemachine.StateEnum;
 
+import java.util.UUID;
 
 import static s.m.complexforms.statemachine.ActionEnum.*;
 import static s.m.complexforms.statemachine.StateEnum.PERSONAL_INFORMATION_FORM;
 
 @Slf4j
-public class PersonalInformationCollection extends AbstractState<PersonalInformationRequest, PersonalInformationResponse> {
+public class PersonalInformationCollection extends AbstractState<PersonalInformationRequest, Person> {
 
     @Override
     public StateEnum getCurrentState() {
         return PERSONAL_INFORMATION_FORM;
     }
 
-    private Input input;
-    private PersonalInformationResponse executionResult;
+    private Input<PersonalInformationRequest> input;
+    private Person executionResult;
     private PersonalInformationRequest personalInformationRequest;
 
     @Override
-    public Output execute(Input input) {
+    public Output<Person> execute(Input<PersonalInformationRequest> input) {
         this.input = input;
         log.info("received request : {}", input);
         // actually process the request
-        this.personalInformationRequest = getStateRequest();
+        this.personalInformationRequest = getStateRequest(input);
         this.executionResult = process();
         return getOutput();
     }
 
-    private PersonalInformationResponse process(){
+    private Person process(){
         log.info("Processing {}",personalInformationRequest);
-        return new PersonalInformationResponse();
+        Person person = new Person();
+        person.setId(UUID.randomUUID().toString());
+        BeanUtils.copyProperties(personalInformationRequest,person);
+        return person;
     }
 
     @Override
-    public Output getOutput() {
-        Output output = new Output();
+    public Output<Person> getOutput() {
+        Output<Person> output = new Output<>();
         /* decide the next state */
         if(personalInformationRequest.getIsStudent()) {
             output.setNextAction(TO_EDUCATION_INFO);
@@ -75,36 +81,14 @@ public class PersonalInformationCollection extends AbstractState<PersonalInforma
         }
 
         output.setBackAction(TO_START);
+        output.setResponse(executionResult);
         return output;
     }
 
     @Override
-    public PersonalInformationRequest getStateRequest() {
-        log.info("Converting '{}' form to PersonalInformationRequest", input.getFilledForm().getName());
-        PersonalInformationRequest request = new PersonalInformationRequest();
-        input.getFilledForm().getElements().forEach(formElement -> {
-            switch (formElement.getName()){
-                case FormStateConstants.NAME:
-                    if(formElement instanceof TextFormElement){
-                        request.setName(((TextFormElement) formElement).getValue());
-                    }
-                    break;
-                case FormStateConstants.GENDER:
-                    if(formElement instanceof TextFormElement){
-                        request.setGender(((TextFormElement) formElement).getValue());
-                    }
-                    break;
-                case FormStateConstants.IS_STUDENT:
-                    if(formElement instanceof BinaryFormElement){
-                        request.setIsStudent(((BinaryFormElement) formElement).getValue());
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            String.format("Unknown {} element", formElement.getName())
-                    );
-            }
-        });
-        return request;
+    protected PersonalInformationRequest getStateRequest(Input input) {
+        return InputOutputUtil.get(input.getRequest(), new TypeReference<>(){});
     }
+
+
 }
