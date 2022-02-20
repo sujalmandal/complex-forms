@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import s.m.complexforms.dto.Input;
 import s.m.complexforms.dto.Output;
-import s.m.complexforms.service.StateExecutionService;
+import s.m.complexforms.statemachine.StateExecutionService;
 
 @RestController
 @RequestMapping("/state")
