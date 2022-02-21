@@ -1,6 +1,7 @@
 package s.m.complexforms.state;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import s.m.complexforms.common.FormStateConstants;
 import s.m.complexforms.dto.Input;
 import s.m.complexforms.dto.Output;
