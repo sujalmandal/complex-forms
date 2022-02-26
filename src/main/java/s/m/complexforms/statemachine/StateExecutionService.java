@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import s.m.complexforms.dto.Input;
 import s.m.complexforms.dto.Output;
-import s.m.complexforms.statemachine.State;
-import s.m.complexforms.statemachine.StateFactory;
 
 import java.util.Stack;
 
@@ -24,6 +22,8 @@ public class StateExecutionService {
         // capture the sequence of states
         output.setSequence(input.getSequence()==null?new Stack<>():input.getSequence());
         output.getSequence().push(thisState.getCurrentState());
+        //set the back action of the output to the current action of the input
+        output.setBackAction(input.getAction());
         return output;
     }
 

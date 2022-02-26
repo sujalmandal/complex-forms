@@ -73,7 +73,7 @@ public class PersonalInformationCollection extends AbstractState<PersonalInforma
                     .builder("Work information section")
                     .withElement(new NumberFormElement("Total experience", FormStateConstants.TOTAL_EXPERIENCE))
                     .withElement(new NumberFormElement("Your current annual compensation",FormStateConstants.CURRENT_SALARY))
-                    .withElement(new TextFormElement("Industry you work in",FormStateConstants.INDUSTRY))
+                    .withElement(new TextFormElement("Industry you work in",FormStateConstants.CURRENT_INDUSTRY))
                     .withElement(new TextFormElement("Current employer name",FormStateConstants.CURRENT_EMPLOYER))
                     .withElement(new TextFormElement("Current position",FormStateConstants.CURRENT_POSITION))
                     .build();
